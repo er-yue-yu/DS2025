@@ -1,0 +1,161 @@
+#include <iostream>
+#include <cmath>
+#include <ctime>
+#include <vector>
+#include <cstdlib>
+#include "Vector.cpp" // 请确保 Vector.h/Vector.cpp 已正确包含
+
+using namespace std;
+
+// 复数类定义
+class Complex {
+public:
+    double real;
+    double imag;
+
+    Complex(double r = 0, double i = 0) : real(r), imag(i) {}
+
+    // 模
+    double modulus() const {
+        return sqrt(real * real + imag * imag);
+    }
+
+    // ==运算符（实部和虚部均相等）
+    bool operator==(const Complex& other) const {
+        return real == other.real && imag == other.imag;
+    }
+
+    // >运算符（按模排序，模相同按实部）
+    bool operator>(const Complex& other) const {
+        if (fabs(modulus() - other.modulus()) > 1e-8)
+            return modulus() > other.modulus();
+        return real > other.real;
+    }
+
+    // <运算符（按模排序，模相同按实部）
+    bool operator<(const Complex& other) const {
+        if (fabs(modulus() - other.modulus()) > 1e-8)
+            return modulus() < other.modulus();
+        return real < other.real;
+    }
+
+    // 输出
+    friend ostream& operator<<(ostream& os, const Complex& c) {
+        os << "(" << c.real << "," << c.imag << ")";
+        return os;
+    }
+};
+
+// 随机生成复数
+Complex randomComplex(int range = 10) {
+    double r = rand() % range - range / 2;
+    double i = rand() % range - range / 2;
+    return Complex(r, i);
+}
+
+// 输出向量
+void printComplexVector(Vector<Complex>& v, string msg = "") {
+    cout << msg << "[ ";
+    for (int i = 0; i < v.size(); ++i)
+        cout << v[i] << " ";
+    cout << "]" << endl;
+}
+
+// 主程序
+int main() {
+    srand(time(0));
+    int n = 20; // 向量元素个数
+    Vector<Complex> vec;
+
+    // (1) 随机生成无序复数向量（有重复项）
+    for (int i = 0; i < n; ++i) {
+        Complex c = randomComplex();
+        vec.insert(c);
+        if (i % 3 == 0) vec.insert(c); // 插入重复项
+    }
+    printComplexVector(vec, "初始无序复数向量: ");
+
+    // 置乱
+    vec.unsort();
+    printComplexVector(vec, "置乱后: ");
+
+    // 查找（以实部和虚部均相同为标准）
+    Complex to_find = vec[rand() % vec.size()];
+    int idx = vec.find(to_find);
+    cout << "查找复数 " << to_find << "，位置: " << idx << endl;
+
+    // 插入
+    Complex c_insert(99, -99);
+    vec.insert(0, c_insert); // 插入到头部
+    printComplexVector(vec, "插入(99,-99)后: ");
+
+    // 删除
+    vec.remove(0); // 删除刚插入的
+    printComplexVector(vec, "删除首元素后: ");
+
+    // 唯一化（去重）
+    int num_removed = vec.deduplicate();
+    printComplexVector(vec, "唯一化后: ");
+    cout << "去除了 " << num_removed << " 个重复项。\n";
+
+    // (2) 排序效率比较
+    Vector<Complex> copy1(vec), copy2(vec), copy3(vec);
+
+    // 顺序
+    clock_t start = clock();
+    copy1.bubbleSort(0, copy1.size());
+    clock_t end = clock();
+    cout << "顺序下起泡排序耗时: " << (double)(end - start) / CLOCKS_PER_SEC << "秒\n";
+
+    start = clock();
+    copy2.mergeSort(0, copy2.size());
+    end = clock();
+    cout << "顺序下归并排序耗时: " << (double)(end - start) / CLOCKS_PER_SEC << "秒\n";
+
+    // 乱序
+    copy1.unsort();
+    copy2.unsort();
+
+    start = clock();
+    copy1.bubbleSort(0, copy1.size());
+    end = clock();
+    cout << "乱序下起泡排序耗时: " << (double)(end - start) / CLOCKS_PER_SEC << "秒\n";
+
+    start = clock();
+    copy2.mergeSort(0, copy2.size());
+    end = clock();
+    cout << "乱序下归并排序耗时: " << (double)(end - start) / CLOCKS_PER_SEC << "秒\n";
+
+    // 逆序
+    // 先排好序，再逆序
+    copy3.mergeSort(0, copy3.size());
+    for (int i = 0; i < copy3.size() / 2; ++i)
+        swap(copy3[i], copy3[copy3.size() - 1 - i]);
+
+    start = clock();
+    copy3.bubbleSort(0, copy3.size());
+    end = clock();
+    cout << "逆序下起泡排序耗时: " << (double)(end - start) / CLOCKS_PER_SEC << "秒\n";
+
+    copy3.unsort();
+    copy3.mergeSort(0, copy3.size()); // 排序
+    for (int i = 0; i < copy3.size() / 2; ++i)
+        swap(copy3[i], copy3[copy3.size() - 1 - i]);
+    start = clock();
+    copy3.mergeSort(0, copy3.size());
+    end = clock();
+    cout << "逆序下归并排序耗时: " << (double)(end - start) / CLOCKS_PER_SEC << "秒\n";
+
+    // (3) 区间查找：查找模在[m1, m2)的所有元素，按序存入子向量
+    double m1 = 5, m2 = 10;
+    Vector<Complex> sortedVec(copy2); // copy2 已排序
+    Vector<Complex> subVec;
+    for (int i = 0; i < sortedVec.size(); ++i) {
+        double mod = sortedVec[i].modulus();
+        if (mod >= m1 && mod < m2)
+            subVec.insert(subVec.size(), sortedVec[i]);
+    }
+    printComplexVector(subVec, "模介于[5, 10)的所有复数: ");
+
+    return 0;
+}
