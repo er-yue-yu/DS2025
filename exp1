@@ -1,1 +1,194 @@
+#include <iostream>
+#include <cmath>
+#include <ctime>
+#include "Vector.h"
 
+using namespace std;
+
+// 复数类定义
+class Complex {
+private:
+    double real;   // 实部
+    double imag;   // 虚部
+
+public:
+    // 构造函数
+    Complex(double r = 0, double i = 0) : real(r), imag(i) {}
+
+    // 获取模长
+    double modulus() const {
+        return sqrt(real * real + imag * imag);
+    }
+
+    // 重载比较运算符（用于排序）
+    bool operator>(const Complex& other) const {
+        if (modulus() != other.modulus()) {
+            return modulus() > other.modulus();
+        }
+        return real > other.real;  // 模相等时比较实部
+    }
+
+    bool operator<=(const Complex& other) const {
+        return !(*this > other);
+    }
+
+    bool operator==(const Complex& other) const {
+        return (real == other.real) && (imag == other.imag);
+    }
+
+    // 友元函数：输出复数
+    friend ostream& operator<<(ostream& os, const Complex& c) {
+        os << "(" << c.real << ", " << c.imag << ")";
+        return os;
+    }
+};
+
+// 生成随机复数
+Complex randomComplex(double min, double max) {
+    double r = min + (max - min) * rand() / RAND_MAX;
+    double i = min + (max - min) * rand() / RAND_MAX;
+    return Complex(r, i);
+}
+
+// 区间查找函数：查找模介于[m1, m2)的所有元素
+Vector<Complex> findByModulusRange(const Vector<Complex>& vec, double m1, double m2) {
+    Vector<Complex> result;
+    for (Rank i = 0; i < vec.size(); ++i) {
+        double mod = vec[i].modulus();
+        if (mod >= m1 && mod < m2) {
+            result.insert(result.size(), vec[i]);
+        }
+    }
+    return result;
+}
+
+// 测试排序效率
+void testSortEfficiency(Vector<Complex>& vec, const string& orderType) {
+    // 复制三个向量分别用于不同排序
+    Vector<Complex> vec1 = vec;
+    Vector<Complex> vec2 = vec;
+
+    // 测试起泡排序
+    clock_t start = clock();
+    vec1.bubbleSort(0, vec1.size());
+    clock_t bubbleTime = clock() - start;
+
+    // 测试归并排序
+    start = clock();
+    vec2.mergeSort(0, vec2.size());
+    clock_t mergeTime = clock() - start;
+
+    // 输出结果
+    cout << orderType << "情况下：" << endl;
+    cout << "  起泡排序时间: " << (double)bubbleTime / CLOCKS_PER_SEC << "s" << endl;
+    cout << "  归并排序时间: " << (double)mergeTime / CLOCKS_PER_SEC << "s" << endl;
+    cout << endl;
+}
+
+int main() {
+    srand((unsigned int)time(NULL));
+
+    // 1. 测试无序向量的基本操作
+    cout << "=== 基本操作测试 ===" << endl;
+    Vector<Complex> vec;
+    
+    // 插入10个随机复数
+    for (int i = 0; i < 10; ++i) {
+        vec.insert(randomComplex(0, 10));
+    }
+    // 插入一些重复元素
+    vec.insert(vec[0]);
+    vec.insert(vec[3]);
+    vec.insert(vec[5]);
+
+    cout << "初始向量（含重复元素）: ";
+    for (int i = 0; i < vec.size(); ++i) {
+        cout << vec[i] << " ";
+    }
+    cout << endl << endl;
+
+    // 置乱操作
+    vec.unsort();
+    cout << "置乱后向量: ";
+    for (int i = 0; i < vec.size(); ++i) {
+        cout << vec[i] << " ";
+    }
+    cout << endl << endl;
+
+    // 查找操作
+    if (!vec.empty()) {
+        Complex target = vec[2];
+        Rank pos = vec.find(target);
+        if (pos != -1) {
+            cout << "查找 " << target << " 结果: 位置 " << pos << endl;
+        } else {
+            cout << "查找 " << target << " 结果: 未找到" << endl;
+        }
+    }
+    cout << endl;
+
+    // 插入操作
+    Complex newComp(100, 200);
+    vec.insert(3, newComp);
+    cout << "在位置3插入" << newComp << "后: ";
+    for (int i = 0; i < vec.size(); ++i) {
+        cout << vec[i] << " ";
+    }
+    cout << endl << endl;
+
+    // 删除操作
+    if (vec.size() > 5) {
+        Complex removed = vec.remove(5);
+        cout << "删除位置5的元素" << removed << "后: ";
+        for (int i = 0; i < vec.size(); ++i) {
+            cout << vec[i] << " ";
+        }
+        cout << endl << endl;
+    }
+
+    // 唯一化操作
+    int dupCount = vec.deduplicate();
+    cout << "唯一化后（移除" << dupCount << "个重复元素）: ";
+    for (int i = 0; i < vec.size(); ++i) {
+        cout << vec[i] << " ";
+    }
+    cout << endl << endl;
+
+    // 2. 测试排序效率
+    cout << "=== 排序效率测试 ===" << endl;
+    const int TEST_SIZE = 5000;  // 测试数据量
+    Vector<Complex> testVec;
+
+    // 生成随机向量（乱序）
+    for (int i = 0; i < TEST_SIZE; ++i) {
+        testVec.insert(randomComplex(0, 1000));
+    }
+
+    // 测试乱序情况
+    Vector<Complex> randomVec = testVec;
+    testSortEfficiency(randomVec, "乱序");
+
+    // 测试顺序情况（已排序）
+    Vector<Complex> sortedVec = testVec;
+    sortedVec.sort();
+    testSortEfficiency(sortedVec, "顺序");
+
+    // 测试逆序情况
+    Vector<Complex> reversedVec;
+    for (int i = sortedVec.size() - 1; i >= 0; --i) {
+        reversedVec.insert(sortedVec[i]);
+    }
+    testSortEfficiency(reversedVec, "逆序");
+
+    // 3. 区间查找测试
+    cout << "=== 区间查找测试 ===" << endl;
+    // 使用已排序的向量进行查找
+    double m1 = 200, m2 = 500;
+    Vector<Complex> rangeResult = findByModulusRange(sortedVec, m1, m2);
+    cout << "模介于[" << m1 << ", " << m2 << ")的元素有" << rangeResult.size() << "个: " << endl;
+    for (int i = 0; i < rangeResult.size(); ++i) {
+        cout << rangeResult[i] << " (模: " << rangeResult[i].modulus() << ")" << endl;
+    }
+
+    return 0;
+}
