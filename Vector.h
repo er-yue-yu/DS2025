@@ -2,8 +2,8 @@
 #define VECTOR_H
 
 #include <cstdlib>
-#include <algorithm> // ÓÃÓÚstd::swap
-#include <stdexcept> // ÓÃÓÚÒì³£´¦Àí
+#include <algorithm> // ç”¨äºstd::swap
+#include <stdexcept> // ç”¨äºå¼‚å¸¸å¤„ç†
 
 typedef int Rank;
 #define DEFAULT_CAPACITY 3
@@ -11,61 +11,61 @@ typedef int Rank;
 template <typename T>
 class Vector {
 protected:
-    Rank _size;       // µ±Ç°ÔªËØ¸öÊı
-    int _capacity;    // ÈİÁ¿
-    T* _elem;         // ÔªËØÊı×é
+    Rank _size;       // å½“å‰å…ƒç´ ä¸ªæ•°
+    int _capacity;    // å®¹é‡
+    T* _elem;         // å…ƒç´ æ•°ç»„
 
-    // ´ÓÊı×éAµÄ[lo, hi)Çø¼ä¸´ÖÆÔªËØ
+    // ä»æ•°ç»„Açš„[lo, hi)åŒºé—´å¤åˆ¶å…ƒç´ 
     void copyFrom(const T* A, Rank lo, Rank hi) {
-        _capacity = 2 * (hi - lo);  // ³õÊ¼ÈİÁ¿ÉèÎªÔªËØ¸öÊıµÄ2±¶
+        _capacity = 2 * (hi - lo);  // åˆå§‹å®¹é‡è®¾ä¸ºå…ƒç´ ä¸ªæ•°çš„2å€
         _elem = new T[_capacity];
         _size = 0;
         while (lo < hi) {
-            _elem[_size++] = A[lo++];  // ¸´ÖÆÔªËØ
+            _elem[_size++] = A[lo++];  // å¤åˆ¶å…ƒç´ 
         }
     }
 
-    // À©Èİ²Ù×÷£¨ÈİÁ¿²»×ãÊ±£©
+    // æ‰©å®¹æ“ä½œï¼ˆå®¹é‡ä¸è¶³æ—¶ï¼‰
     void expand() {
-        if (_size < _capacity) return;  // ÎŞĞèÀ©Èİ
-        _capacity = std::max(_capacity, DEFAULT_CAPACITY);  // È·±£×îĞ¡ÈİÁ¿
+        if (_size < _capacity) return;  // æ— éœ€æ‰©å®¹
+        _capacity = std::max(_capacity, DEFAULT_CAPACITY);  // ç¡®ä¿æœ€å°å®¹é‡
         T* oldElem = _elem;
-        _elem = new T[_capacity <<= 1];  // ÈİÁ¿·­±¶
+        _elem = new T[_capacity <<= 1];  // å®¹é‡ç¿»å€
         for (Rank i = 0; i < _size; ++i) {
-            _elem[i] = oldElem[i];  // ¸´ÖÆ¾ÉÔªËØ
+            _elem[i] = oldElem[i];  // å¤åˆ¶æ—§å…ƒç´ 
         }
-        delete[] oldElem;  // ÊÍ·Å¾É¿Õ¼ä
+        delete[] oldElem;  // é‡Šæ”¾æ—§ç©ºé—´
     }
 
-    // ËõÈİ²Ù×÷£¨ÈİÁ¿¹ı´óÊ±£©
+    // ç¼©å®¹æ“ä½œï¼ˆå®¹é‡è¿‡å¤§æ—¶ï¼‰
     void shrink() {
-        if (_capacity <= DEFAULT_CAPACITY || _size * 4 > _capacity) return;  // ÎŞĞèËõÈİ
+        if (_capacity <= DEFAULT_CAPACITY || _size * 4 > _capacity) return;  // æ— éœ€ç¼©å®¹
         T* oldElem = _elem;
-        _elem = new T[_capacity >>= 1];  // ÈİÁ¿¼õ°ë
+        _elem = new T[_capacity >>= 1];  // å®¹é‡å‡åŠ
         for (Rank i = 0; i < _size; ++i) {
-            _elem[i] = oldElem[i];  // ¸´ÖÆ¾ÉÔªËØ
+            _elem[i] = oldElem[i];  // å¤åˆ¶æ—§å…ƒç´ 
         }
-        delete[] oldElem;  // ÊÍ·Å¾É¿Õ¼ä
+        delete[] oldElem;  // é‡Šæ”¾æ—§ç©ºé—´
     }
 
-    // Ã°ÅİÅÅĞòµÄÒ»ÌËÉ¨Ãè£¨[lo, hi)£©
+    // å†’æ³¡æ’åºçš„ä¸€è¶Ÿæ‰«æï¼ˆ[lo, hi)ï¼‰
     bool bubble(Rank lo, Rank hi) {
         bool sorted = true;
         while (++lo < hi) {
             if (_elem[lo - 1] > _elem[lo]) {
-                std::swap(_elem[lo - 1], _elem[lo]);  // ½»»»ÄæĞò¶Ô
+                std::swap(_elem[lo - 1], _elem[lo]);  // äº¤æ¢é€†åºå¯¹
                 sorted = false;
             }
         }
         return sorted;
     }
 
-    // Ã°ÅİÅÅĞò£¨[lo, hi)£©
+    // å†’æ³¡æ’åºï¼ˆ[lo, hi)ï¼‰
     void bubbleSort(Rank lo, Rank hi) {
-        while (!bubble(lo, hi--));  // ÖğÌËÉ¨Ãè£¬Ö±µ½ÓĞĞò
+        while (!bubble(lo, hi--));  // é€è¶Ÿæ‰«æï¼Œç›´åˆ°æœ‰åº
     }
 
-    // ²éÕÒ[lo, hi)Çø¼äµÄ×î´óÔªËØË÷Òı
+    // æŸ¥æ‰¾[lo, hi)åŒºé—´çš„æœ€å¤§å…ƒç´ ç´¢å¼•
     Rank max(Rank lo, Rank hi) {
         Rank maxIdx = lo;
         for (Rank i = lo + 1; i < hi; ++i) {
@@ -76,61 +76,61 @@ protected:
         return maxIdx;
     }
 
-    // Ñ¡ÔñÅÅĞò£¨[lo, hi)£©
+    // é€‰æ‹©æ’åºï¼ˆ[lo, hi)ï¼‰
     void selectionSort(Rank lo, Rank hi) {
         while (lo < --hi) {
-            std::swap(_elem[max(lo, hi)], _elem[hi]);  // ½«×î´óÔªËØ·Åµ½Ä©Î²
+            std::swap(_elem[max(lo, hi)], _elem[hi]);  // å°†æœ€å¤§å…ƒç´ æ”¾åˆ°æœ«å°¾
         }
     }
 
-    // ¹é²¢²Ù×÷£¨ºÏ²¢[lo, mi)ºÍ[mi, hi)£©
+    // å½’å¹¶æ“ä½œï¼ˆåˆå¹¶[lo, mi)å’Œ[mi, hi)ï¼‰
     void merge(Rank lo, Rank mi, Rank hi) {
-        T* temp = new T[hi - lo];  // ÁÙÊ±Êı×é
+        T* temp = new T[hi - lo];  // ä¸´æ—¶æ•°ç»„
         Rank i = lo, j = mi, k = 0;
-        while (i < mi && j < hi) {  // ºÏ²¢Á½¸öÓĞĞòÇø¼ä
+        while (i < mi && j < hi) {  // åˆå¹¶ä¸¤ä¸ªæœ‰åºåŒºé—´
             temp[k++] = (_elem[i] <= _elem[j]) ? _elem[i++] : _elem[j++];
         }
-        while (i < mi) temp[k++] = _elem[i++];  // ´¦ÀíÊ£ÓàÔªËØ
+        while (i < mi) temp[k++] = _elem[i++];  // å¤„ç†å‰©ä½™å…ƒç´ 
         while (j < hi) temp[k++] = _elem[j++];
-        for (i = lo, k = 0; i < hi; ++i) {  // ¸´ÖÆ»ØÔ­Êı×é
+        for (i = lo, k = 0; i < hi; ++i) {  // å¤åˆ¶å›åŸæ•°ç»„
             _elem[i] = temp[k++];
         }
-        delete[] temp;  // ÊÍ·ÅÁÙÊ±¿Õ¼ä
+        delete[] temp;  // é‡Šæ”¾ä¸´æ—¶ç©ºé—´
     }
 
-    // ¹é²¢ÅÅĞò£¨[lo, hi)£©
+    // å½’å¹¶æ’åºï¼ˆ[lo, hi)ï¼‰
     void mergeSort(Rank lo, Rank hi) {
-        if (hi - lo < 2) return;  // µ¥¸öÔªËØ×ÔÈ»ÓĞĞò
+        if (hi - lo < 2) return;  // å•ä¸ªå…ƒç´ è‡ªç„¶æœ‰åº
         Rank mi = (lo + hi) / 2;
-        mergeSort(lo, mi);        // ×ó°ë²¿·ÖÅÅĞò
-        mergeSort(mi, hi);        // ÓÒ°ë²¿·ÖÅÅĞò
-        merge(lo, mi, hi);        // ¹é²¢
+        mergeSort(lo, mi);        // å·¦åŠéƒ¨åˆ†æ’åº
+        mergeSort(mi, hi);        // å³åŠéƒ¨åˆ†æ’åº
+        merge(lo, mi, hi);        // å½’å¹¶
     }
 
-    // ¿ìËÙÅÅĞòµÄ»®·Ö²Ù×÷£¨[lo, hi)£©
+    // å¿«é€Ÿæ’åºçš„åˆ’åˆ†æ“ä½œï¼ˆ[lo, hi)ï¼‰
     Rank partition(Rank lo, Rank hi) {
-        std::swap(_elem[lo], _elem[lo + rand() % (hi - lo)]);  // Ëæ»úÑ¡Ôñ»ù×¼ÔªËØ
+        std::swap(_elem[lo], _elem[lo + rand() % (hi - lo)]);  // éšæœºé€‰æ‹©åŸºå‡†å…ƒç´ 
         T pivot = _elem[lo];
-        --hi;  // ´Óhi-1¿ªÊ¼
+        --hi;  // ä»hi-1å¼€å§‹
         while (lo < hi) {
-            while (lo < hi && pivot <= _elem[hi]) --hi;  // ´ÓÓÒÏò×óÕÒĞ¡ÓÚ»ù×¼µÄÔªËØ
+            while (lo < hi && pivot <= _elem[hi]) --hi;  // ä»å³å‘å·¦æ‰¾å°äºåŸºå‡†çš„å…ƒç´ 
             _elem[lo] = _elem[hi];
-            while (lo < hi && _elem[lo] <= pivot) ++lo;  // ´Ó×óÏòÓÒÕÒ´óÓÚ»ù×¼µÄÔªËØ
+            while (lo < hi && _elem[lo] <= pivot) ++lo;  // ä»å·¦å‘å³æ‰¾å¤§äºåŸºå‡†çš„å…ƒç´ 
             _elem[hi] = _elem[lo];
         }
-        _elem[lo] = pivot;  // »ù×¼ÔªËØ¹éÎ»
-        return lo;          // ·µ»Ø»ù×¼Î»ÖÃ
+        _elem[lo] = pivot;  // åŸºå‡†å…ƒç´ å½’ä½
+        return lo;          // è¿”å›åŸºå‡†ä½ç½®
     }
 
-    // ¿ìËÙÅÅĞò£¨[lo, hi)£©
+    // å¿«é€Ÿæ’åºï¼ˆ[lo, hi)ï¼‰
     void quickSort(Rank lo, Rank hi) {
-        if (hi - lo < 2) return;  // µ¥¸öÔªËØ×ÔÈ»ÓĞĞò
+        if (hi - lo < 2) return;  // å•ä¸ªå…ƒç´ è‡ªç„¶æœ‰åº
         Rank pivot = partition(lo, hi);
-        quickSort(lo, pivot);     // ×ó°ë²¿·ÖÅÅĞò
-        quickSort(pivot + 1, hi); // ÓÒ°ë²¿·ÖÅÅĞò
+        quickSort(lo, pivot);     // å·¦åŠéƒ¨åˆ†æ’åº
+        quickSort(pivot + 1, hi); // å³åŠéƒ¨åˆ†æ’åº
     }
 
-    // ¶ÑÅÅĞò¸¨Öú£ºÏÂÂË²Ù×÷
+    // å †æ’åºè¾…åŠ©ï¼šä¸‹æ»¤æ“ä½œ
     void heapify(Rank i, Rank n) {
         while (true) {
             Rank left = 2 * i + 1;
@@ -147,14 +147,14 @@ protected:
         }
     }
 
-    // ¶ÑÅÅĞò£¨[lo, hi)£©
+    // å †æ’åºï¼ˆ[lo, hi)ï¼‰
     void heapSort(Rank lo, Rank hi) {
         int n = hi - lo;
-        // ¹¹½¨×î´ó¶Ñ
+        // æ„å»ºæœ€å¤§å †
         for (int i = n / 2 - 1; i >= 0; --i) {
             heapify(lo + i, lo + n);
         }
-        // ÌáÈ¡×î´óÔªËØ²¢µ÷Õû¶Ñ
+        // æå–æœ€å¤§å…ƒç´ å¹¶è°ƒæ•´å †
         for (int i = n - 1; i > 0; --i) {
             std::swap(_elem[lo], _elem[lo + i]);
             heapify(lo, lo + i);
@@ -162,9 +162,9 @@ protected:
     }
 
 public:
-    // ¹¹Ôìº¯Êı£ºÖ¸¶¨ÈİÁ¿¡¢³õÊ¼ÔªËØ¸öÊıºÍ³õÊ¼Öµ
+    // æ„é€ å‡½æ•°ï¼šæŒ‡å®šå®¹é‡ã€åˆå§‹å…ƒç´ ä¸ªæ•°å’Œåˆå§‹å€¼
     Vector(int c = DEFAULT_CAPACITY, int s = 0, T v = 0) {
-        if (s > c) throw std::invalid_argument("³õÊ¼ÔªËØ¸öÊı²»ÄÜ³¬¹ıÈİÁ¿");
+        if (s > c) throw std::invalid_argument("åˆå§‹å…ƒç´ ä¸ªæ•°ä¸èƒ½è¶…è¿‡å®¹é‡");
         _capacity = c;
         _elem = new T[_capacity];
         _size = 0;
@@ -173,44 +173,44 @@ public:
         }
     }
 
-    // ´ÓÊı×é¹¹Ôì£¨n¸öÔªËØ£©
+    // ä»æ•°ç»„æ„é€ ï¼ˆnä¸ªå…ƒç´ ï¼‰
     Vector(const T* A, Rank n) {
         copyFrom(A, 0, n);
     }
 
-    // ´ÓÊı×éµÄ[lo, hi)Çø¼ä¹¹Ôì
+    // ä»æ•°ç»„çš„[lo, hi)åŒºé—´æ„é€ 
     Vector(const T* A, Rank lo, Rank hi) {
-    if (lo < 0 || hi <= lo) throw std::invalid_argument("ÎŞĞ§Çø¼ä");
+    if (lo < 0 || hi <= lo) throw std::invalid_argument("æ— æ•ˆåŒºé—´");
     copyFrom(A, lo, hi);
 }
 
-    // ¸´ÖÆ¹¹Ôì£¨Õû¸öÏòÁ¿£©
+    // å¤åˆ¶æ„é€ ï¼ˆæ•´ä¸ªå‘é‡ï¼‰
     Vector(const Vector<T>& V) {
         copyFrom(V._elem, 0, V._size);
     }
 
-    // ¸´ÖÆ¹¹Ôì£¨ÏòÁ¿µÄ[lo, hi)Çø¼ä£©
+    // å¤åˆ¶æ„é€ ï¼ˆå‘é‡çš„[lo, hi)åŒºé—´ï¼‰
     Vector(const Vector<T>& V, Rank lo, Rank hi) {
-        if (lo < 0 || hi > V._size || lo >= hi) throw std::invalid_argument("ÎŞĞ§µÄÇø¼ä");
+        if (lo < 0 || hi > V._size || lo >= hi) throw std::invalid_argument("æ— æ•ˆçš„åŒºé—´");
         copyFrom(V._elem, lo, hi);
     }
 
-    // Îö¹¹º¯Êı
+    // ææ„å‡½æ•°
     ~Vector() {
         delete[] _elem;
     }
 
-    // »ñÈ¡µ±Ç°ÔªËØ¸öÊı
+    // è·å–å½“å‰å…ƒç´ ä¸ªæ•°
     Rank size() const {
         return _size;
     }
 
-    // ÅĞ¶ÏÊÇ·ñÎª¿Õ
+    // åˆ¤æ–­æ˜¯å¦ä¸ºç©º
     bool empty() const {
         return _size == 0;
     }
 
-    // ¼ì²éÏòÁ¿ÊÇ·ñÓĞĞò£¨·µ»ØÄæĞò¶ÔÊıÁ¿£©
+    // æ£€æŸ¥å‘é‡æ˜¯å¦æœ‰åºï¼ˆè¿”å›é€†åºå¯¹æ•°é‡ï¼‰
     int disordered() const {
         int cnt = 0;
         for (Rank i = 1; i < _size; ++i) {
@@ -219,12 +219,12 @@ public:
         return cnt;
     }
 
-    // ²éÕÒÔªËØe£¨Õû¸öÏòÁ¿£©
+    // æŸ¥æ‰¾å…ƒç´ eï¼ˆæ•´ä¸ªå‘é‡ï¼‰
     Rank find(const T& e) const {
         return find(e, 0, _size);
     }
 
-    // ²éÕÒ[lo, hi)Çø¼äµÄÔªËØe£¨·µ»ØÊ×´Î³öÏÖµÄË÷Òı£¬Î´ÕÒµ½·µ»Ø-1£©
+    // æŸ¥æ‰¾[lo, hi)åŒºé—´çš„å…ƒç´ eï¼ˆè¿”å›é¦–æ¬¡å‡ºç°çš„ç´¢å¼•ï¼Œæœªæ‰¾åˆ°è¿”å›-1ï¼‰
     Rank find(const T& e, Rank lo, Rank hi) const {
         if (lo < 0 || hi > _size || lo >= hi) return -1;
         while (lo < hi) {
@@ -234,12 +234,12 @@ public:
         return -1;
     }
 
-    // ÓĞĞòÏòÁ¿ÖĞ²éÕÒÔªËØe£¨Õû¸öÏòÁ¿£©
+    // æœ‰åºå‘é‡ä¸­æŸ¥æ‰¾å…ƒç´ eï¼ˆæ•´ä¸ªå‘é‡ï¼‰
     Rank search(const T& e) const {
         return (0 >= _size) ? -1 : search(e, 0, _size);
     }
 
-    // ÓĞĞòÏòÁ¿ÖĞ²éÕÒ[lo, hi)Çø¼äµÄÔªËØe£¨¶ş·Ö²éÕÒ£©
+    // æœ‰åºå‘é‡ä¸­æŸ¥æ‰¾[lo, hi)åŒºé—´çš„å…ƒç´ eï¼ˆäºŒåˆ†æŸ¥æ‰¾ï¼‰
     Rank search(const T& e, Rank lo, Rank hi) const {
         if (lo < 0 || hi > _size || lo >= hi) return -1;
         while (lo < hi) {
@@ -250,131 +250,131 @@ public:
                 lo = mi + 1;
             }
         }
-        return --lo;  // ·µ»Ø²»´óÓÚeµÄ×î´óÔªËØË÷Òı
+        return --lo;  // è¿”å›ä¸å¤§äºeçš„æœ€å¤§å…ƒç´ ç´¢å¼•
     }
 
-    // ÖØÔØ[]ÔËËã·û£¨·ÃÎÊÔªËØ£©
+    // é‡è½½[]è¿ç®—ç¬¦ï¼ˆè®¿é—®å…ƒç´ ï¼‰
     T& operator[](Rank r) const {
-        if (r < 0 || r >= _size) throw std::out_of_range("Ë÷ÒıÔ½½ç");
+        if (r < 0 || r >= _size) throw std::out_of_range("ç´¢å¼•è¶Šç•Œ");
         return _elem[r];
     }
 
-    // ÖØÔØ=ÔËËã·û£¨ÏòÁ¿¸³Öµ£©
+    // é‡è½½=è¿ç®—ç¬¦ï¼ˆå‘é‡èµ‹å€¼ï¼‰
     Vector<T>& operator=(const Vector<T>& V) {
-        if (_elem) delete[] _elem;  // ÊÍ·Åµ±Ç°¿Õ¼ä
-        copyFrom(V._elem, 0, V._size);  // ¸´ÖÆĞÂÄÚÈİ
+        if (_elem) delete[] _elem;  // é‡Šæ”¾å½“å‰ç©ºé—´
+        copyFrom(V._elem, 0, V._size);  // å¤åˆ¶æ–°å†…å®¹
         return *this;
     }
 
-    // É¾³ıË÷Òır´¦µÄÔªËØ£¨·µ»Ø±»É¾³ıÔªËØ£©
+    // åˆ é™¤ç´¢å¼•rå¤„çš„å…ƒç´ ï¼ˆè¿”å›è¢«åˆ é™¤å…ƒç´ ï¼‰
     T remove(Rank r) {
-        if (r < 0 || r >= _size) throw std::out_of_range("Ë÷ÒıÔ½½ç");
+        if (r < 0 || r >= _size) throw std::out_of_range("ç´¢å¼•è¶Šç•Œ");
         T e = _elem[r];
         for (Rank i = r; i < _size - 1; ++i) {
-            _elem[i] = _elem[i + 1];  // ÔªËØÇ°ÒÆ
+            _elem[i] = _elem[i + 1];  // å…ƒç´ å‰ç§»
         }
         _size--;
-        shrink();  // ¼ì²éÊÇ·ñĞèÒªËõÈİ
+        shrink();  // æ£€æŸ¥æ˜¯å¦éœ€è¦ç¼©å®¹
         return e;
     }
 
-    // É¾³ı[lo, hi)Çø¼äµÄÔªËØ£¨·µ»ØÉ¾³ıµÄÔªËØ¸öÊı£©
+    // åˆ é™¤[lo, hi)åŒºé—´çš„å…ƒç´ ï¼ˆè¿”å›åˆ é™¤çš„å…ƒç´ ä¸ªæ•°ï¼‰
     int remove(Rank lo, Rank hi) {
         if (lo < 0 || hi > _size || lo >= hi) return 0;
         int cnt = hi - lo;
         while (hi < _size) {
-            _elem[lo++] = _elem[hi++];  // ÔªËØÇ°ÒÆ
+            _elem[lo++] = _elem[hi++];  // å…ƒç´ å‰ç§»
         }
         _size -= cnt;
-        shrink();  // ¼ì²éÊÇ·ñĞèÒªËõÈİ
+        shrink();  // æ£€æŸ¥æ˜¯å¦éœ€è¦ç¼©å®¹
         return cnt;
     }
 
-    // ÔÚË÷Òır´¦²åÈëÔªËØe£¨·µ»Ø²åÈëÎ»ÖÃ£©
+    // åœ¨ç´¢å¼•rå¤„æ’å…¥å…ƒç´ eï¼ˆè¿”å›æ’å…¥ä½ç½®ï¼‰
     Rank insert(Rank r, const T& e) {
-        if (r < 0 || r > _size) throw std::out_of_range("²åÈëÎ»ÖÃÔ½½ç");
-        expand();  // ¼ì²éÊÇ·ñĞèÒªÀ©Èİ
+        if (r < 0 || r > _size) throw std::out_of_range("æ’å…¥ä½ç½®è¶Šç•Œ");
+        expand();  // æ£€æŸ¥æ˜¯å¦éœ€è¦æ‰©å®¹
         for (Rank i = _size; i > r; --i) {
-            _elem[i] = _elem[i - 1];  // ÔªËØºóÒÆ
+            _elem[i] = _elem[i - 1];  // å…ƒç´ åç§»
         }
         _elem[r] = e;
         _size++;
         return r;
     }
 
-    // ÔÚÄ©Î²²åÈëÔªËØe£¨·µ»Ø²åÈëÎ»ÖÃ£©
+    // åœ¨æœ«å°¾æ’å…¥å…ƒç´ eï¼ˆè¿”å›æ’å…¥ä½ç½®ï¼‰
     Rank insert(const T& e) {
         return insert(_size, e);
     }
 
-    // ÅÅĞò[lo, hi)Çø¼ä£¨Ä¬ÈÏÊ¹ÓÃ¿ìËÙÅÅĞò£©
+    // æ’åº[lo, hi)åŒºé—´ï¼ˆé»˜è®¤ä½¿ç”¨å¿«é€Ÿæ’åºï¼‰
     void sort(Rank lo, Rank hi) {
         if (lo < 0 || hi > _size || lo >= hi) return;
-        // ¿É¸ù¾İĞèÒªÇĞ»»ÅÅĞòËã·¨
+        // å¯æ ¹æ®éœ€è¦åˆ‡æ¢æ’åºç®—æ³•
         quickSort(lo, hi);
-        // ÆäËû¿ÉÑ¡Ëã·¨£º
+        // å…¶ä»–å¯é€‰ç®—æ³•ï¼š
         // mergeSort(lo, hi);
         // bubbleSort(lo, hi);
         // selectionSort(lo, hi);
         // heapSort(lo, hi);
     }
 
-    // ÅÅĞòÕû¸öÏòÁ¿
+    // æ’åºæ•´ä¸ªå‘é‡
     void sort() {
         sort(0, _size);
     }
 
-    // ´òÂÒ[lo, hi)Çø¼äµÄÔªËØ
+    // æ‰“ä¹±[lo, hi)åŒºé—´çš„å…ƒç´ 
     void unsort(Rank lo, Rank hi) {
         if (lo < 0 || hi > _size || lo >= hi) return;
         for (Rank i = hi - 1; i > lo; --i) {
-            std::swap(_elem[i], _elem[lo + rand() % (i - lo + 1)]);  // Ëæ»ú½»»»
+            std::swap(_elem[i], _elem[lo + rand() % (i - lo + 1)]);  // éšæœºäº¤æ¢
         }
     }
 
-    // ´òÂÒÕû¸öÏòÁ¿
+    // æ‰“ä¹±æ•´ä¸ªå‘é‡
     void unsort() {
         unsort(0, _size);
     }
 
-    // ÎŞĞòÏòÁ¿È¥ÖØ£¨·µ»ØÉ¾³ıµÄÔªËØ¸öÊı£©
+    // æ— åºå‘é‡å»é‡ï¼ˆè¿”å›åˆ é™¤çš„å…ƒç´ ä¸ªæ•°ï¼‰
     int deduplicate() {
         int oldSize = _size;
         Rank i = 1;
         while (i < _size) {
             if (find(_elem[i], 0, i) == -1) {
-                i++;  // Î´ÕÒµ½ÖØ¸´ÔªËØ£¬¼ÌĞø
+                i++;  // æœªæ‰¾åˆ°é‡å¤å…ƒç´ ï¼Œç»§ç»­
             } else {
-                remove(i);  // ÕÒµ½ÖØ¸´ÔªËØ£¬É¾³ı
+                remove(i);  // æ‰¾åˆ°é‡å¤å…ƒç´ ï¼Œåˆ é™¤
             }
         }
         return oldSize - _size;
     }
 
-    // ÓĞĞòÏòÁ¿È¥ÖØ£¨·µ»ØÉ¾³ıµÄÔªËØ¸öÊı£©
+    // æœ‰åºå‘é‡å»é‡ï¼ˆè¿”å›åˆ é™¤çš„å…ƒç´ ä¸ªæ•°ï¼‰
     int uniquify() {
         if (_size < 2) return 0;
         Rank i = 0, j = 1;
         while (j < _size) {
             if (_elem[i] != _elem[j]) {
-                _elem[++i] = _elem[j];  // ±£Áô²»ÖØ¸´ÔªËØ
+                _elem[++i] = _elem[j];  // ä¿ç•™ä¸é‡å¤å…ƒç´ 
             }
             j++;
         }
         int cnt = _size - (i + 1);
         _size = i + 1;
-        shrink();  // ¼ì²éÊÇ·ñĞèÒªËõÈİ
+        shrink();  // æ£€æŸ¥æ˜¯å¦éœ€è¦ç¼©å®¹
         return cnt;
     }
 
-    // ±éÀúÏòÁ¿£¨º¯ÊıÖ¸Õë°æ±¾£©
+    // éå†å‘é‡ï¼ˆå‡½æ•°æŒ‡é’ˆç‰ˆæœ¬ï¼‰
     void traverse(void (*visit)(T&)) {
         for (Rank i = 0; i < _size; ++i) {
             visit(_elem[i]);
         }
     }
 
-    // ±éÀúÏòÁ¿£¨º¯Êı¶ÔÏó°æ±¾£©
+    // éå†å‘é‡ï¼ˆå‡½æ•°å¯¹è±¡ç‰ˆæœ¬ï¼‰
     template <typename VST>
     void traverse(VST& visit) {
         for (Rank i = 0; i < _size; ++i) {
