@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 // 二叉树节点结构定义（通用数据类型，可通过typedef修改）
-typedef int BTDataType;  // 数据类型，实验时可改为char、float等
+typedef char BTDataType;  // 数据类型，实验时可改为char、float等
 typedef struct BinaryTreeNode {
     BTDataType data;                  // 节点数据
     struct BinaryTreeNode* left;      // 左孩子指针
@@ -373,4 +373,5 @@ void BTPrint(BTDataType data) {
 }
 
 #endif  // BINARY_TREE_H
+
 
