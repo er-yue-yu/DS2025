@@ -12,40 +12,40 @@
 #include <tuple>
 #include <functional>
 
-// Í¼µÄÀàĞÍÃ¶¾Ù
+// å›¾çš„ç±»å‹æšä¸¾
 enum GraphType {
-    UNDIRECTED,  // ÎŞÏòÍ¼
-    DIRECTED     // ÓĞÏòÍ¼
+    UNDIRECTED,  // æ— å‘å›¾
+    DIRECTED     // æœ‰å‘å›¾
 };
 
-// ±ß½á¹¹Ìå£¨´æ´¢¶¥µãË÷ÒıºÍÈ¨ÖØ£©
+// è¾¹ç»“æ„ä½“ï¼ˆå­˜å‚¨é¡¶ç‚¹ç´¢å¼•å’Œæƒé‡ï¼‰
 template <typename WeightType = int>
 struct Edge {
-    int to;         // Ä¿±ê¶¥µãË÷Òı£¨´Ó0¿ªÊ¼£©
-    WeightType w;   // ±ßÈ¨ÖØ£¨Ä¬ÈÏintÀàĞÍ£©
+    int to;         // ç›®æ ‡é¡¶ç‚¹ç´¢å¼•ï¼ˆä»0å¼€å§‹ï¼‰
+    WeightType w;   // è¾¹æƒé‡ï¼ˆé»˜è®¤intç±»å‹ï¼‰
     Edge(int t = -1, WeightType weight = 1) : to(t), w(weight) {}
 };
 
-// Í¼Àà£¨Ä£°åÀà£¬Ö§³Ö×Ô¶¨Òå¶¥µãÊı¾İÀàĞÍºÍ±ßÈ¨ÀàĞÍ£©
+// å›¾ç±»ï¼ˆæ¨¡æ¿ç±»ï¼Œæ”¯æŒè‡ªå®šä¹‰é¡¶ç‚¹æ•°æ®ç±»å‹å’Œè¾¹æƒç±»å‹ï¼‰
 template <typename VertexType = std::string, typename WeightType = int>
 class Graph {
 private:
-    GraphType type;                          // Í¼µÄÀàĞÍ£¨ÓĞÏò/ÎŞÏò£©
-    std::vector<VertexType> vertices;        // ¶¥µã¼¯ºÏ£¨Ë÷Òı¶ÔÓ¦¶¥µã±àºÅ£©
-    std::vector<std::vector<Edge<WeightType>>> adjList;  // ÁÚ½Ó±í£¨ºËĞÄ´æ´¢£©
-    std::vector<std::vector<WeightType>> adjMatrix;       // ÁÚ½Ó¾ØÕó£¨¸¨Öú´æ´¢£©
-    int vertexCount;                         // ¶¥µãÊı
-    int edgeCount;                           // ±ßÊı
-    const WeightType INF;                    // ÎŞÇî´ó£¨±ÜÃâÒç³ö£©
+    GraphType type;                          // å›¾çš„ç±»å‹ï¼ˆæœ‰å‘/æ— å‘ï¼‰
+    std::vector<VertexType> vertices;        // é¡¶ç‚¹é›†åˆï¼ˆç´¢å¼•å¯¹åº”é¡¶ç‚¹ç¼–å·ï¼‰
+    std::vector<std::vector<Edge<WeightType>>> adjList;  // é‚»æ¥è¡¨ï¼ˆæ ¸å¿ƒå­˜å‚¨ï¼‰
+    std::vector<std::vector<WeightType>> adjMatrix;       // é‚»æ¥çŸ©é˜µï¼ˆè¾…åŠ©å­˜å‚¨ï¼‰
+    int vertexCount;                         // é¡¶ç‚¹æ•°
+    int edgeCount;                           // è¾¹æ•°
+    const WeightType INF;                    // æ— ç©·å¤§ï¼ˆé¿å…æº¢å‡ºï¼‰
 
-    // -------------------------- Ë½ÓĞ¸¨Öúº¯Êı --------------------------
-    // ²éÕÒ¶¥µã¶ÔÓ¦µÄË÷Òı£¨²»´æÔÚ·µ»Ø-1£©
+    // -------------------------- ç§æœ‰è¾…åŠ©å‡½æ•° --------------------------
+    // æŸ¥æ‰¾é¡¶ç‚¹å¯¹åº”çš„ç´¢å¼•ï¼ˆä¸å­˜åœ¨è¿”å›-1ï¼‰
     int findVertexIndex(const VertexType& v) const {
         auto it = std::find(vertices.begin(), vertices.end(), v);
         return it != vertices.end() ? static_cast<int>(it - vertices.begin()) : -1;
     }
 
-    // DFSµİ¹é¸¨Öú£¨±éÀú£©
+    // DFSé€’å½’è¾…åŠ©ï¼ˆéå†ï¼‰
     void dfsRecursive(int startIdx, std::vector<bool>& visited, std::vector<VertexType>& result) const {
         visited[startIdx] = true;
         result.push_back(vertices[startIdx]);
@@ -56,7 +56,7 @@ private:
         }
     }
 
-    // TarjanËã·¨¸¨Öú£¨ÕÒ¹Ø½ÚµãºÍË«Á¬Í¨·ÖÁ¿£©
+    // Tarjanç®—æ³•è¾…åŠ©ï¼ˆæ‰¾å…³èŠ‚ç‚¹å’ŒåŒè¿é€šåˆ†é‡ï¼‰
     void tarjan(int u, int parent, int& time, std::vector<int>& disc, std::vector<int>& low,
                 std::vector<bool>& visited, std::vector<bool>& isArticulation,
                 std::stack<std::pair<int, int>>& edgeStack, std::vector<std::vector<VertexType>>& bcc) {
@@ -71,22 +71,22 @@ private:
                 edgeStack.push(std::make_pair(u, v));
                 tarjan(v, u, time, disc, low, visited, isArticulation, edgeStack, bcc);
 
-                // ¸üĞÂlow[u]
+                // æ›´æ–°low[u]
                 low[u] = std::min(low[u], low[v]);
 
-                // Çé¿ö1£º¸ù½ÚµãÇÒ×Ó½ÚµãÊı>=2
+                // æƒ…å†µ1ï¼šæ ¹èŠ‚ç‚¹ä¸”å­èŠ‚ç‚¹æ•°>=2
                 if (parent == -1 && children > 1) {
                     isArticulation[u] = true;
                     extractBCC(u, v, edgeStack, bcc);
                 }
 
-                // Çé¿ö2£º·Ç¸ù½Úµã£¬low[v] >= disc[u]
+                // æƒ…å†µ2ï¼šéæ ¹èŠ‚ç‚¹ï¼Œlow[v] >= disc[u]
                 if (parent != -1 && low[v] >= disc[u]) {
                     isArticulation[u] = true;
                     extractBCC(u, v, edgeStack, bcc);
                 }
             }
-            // »Ø±ß£¨±ÜÃâÖØ¸´´¦Àí¸¸½Úµã£©
+            // å›è¾¹ï¼ˆé¿å…é‡å¤å¤„ç†çˆ¶èŠ‚ç‚¹ï¼‰
             else if (v != parent && disc[v] < low[u]) {
                 low[u] = disc[v];
                 edgeStack.push(std::make_pair(u, v));
@@ -94,7 +94,7 @@ private:
         }
     }
 
-    // ÌáÈ¡Ë«Á¬Í¨·ÖÁ¿£¨¸¨ÖúTarjanËã·¨£©
+    // æå–åŒè¿é€šåˆ†é‡ï¼ˆè¾…åŠ©Tarjanç®—æ³•ï¼‰
     void extractBCC(int u, int v, std::stack<std::pair<int, int>>& edgeStack,
                     std::vector<std::vector<VertexType>>& bcc) {
         std::set<VertexType> component;
@@ -110,19 +110,19 @@ private:
         bcc.push_back(std::vector<VertexType>(component.begin(), component.end()));
     }
 
-    // KruskalËã·¨£º±ßÅÅĞò¸¨Öú
+    // Kruskalç®—æ³•ï¼šè¾¹æ’åºè¾…åŠ©
     static bool compareEdges(const std::tuple<int, int, WeightType>& a,
                              const std::tuple<int, int, WeightType>& b) {
         return std::get<2>(a) < std::get<2>(b);
     }
 
-    // ²¢²é¼¯²éÕÒ£¨Â·¾¶Ñ¹Ëõ£©
+    // å¹¶æŸ¥é›†æŸ¥æ‰¾ï¼ˆè·¯å¾„å‹ç¼©ï¼‰
     int findUnion(int x, std::vector<int>& parent) {
         if (parent[x] != x) parent[x] = findUnion(parent[x], parent);
         return parent[x];
     }
 
-    // ²¢²é¼¯ºÏ²¢£¨°´ÖÈºÏ²¢£©
+    // å¹¶æŸ¥é›†åˆå¹¶ï¼ˆæŒ‰ç§©åˆå¹¶ï¼‰
     void unionSet(int x, int y, std::vector<int>& parent, std::vector<int>& rank) {
         int xRoot = findUnion(x, parent);
         int yRoot = findUnion(y, parent);
@@ -136,28 +136,28 @@ private:
     }
 
 public:
-    // -------------------------- ¹¹Ôìº¯Êı --------------------------
-    // ¿ÕÍ¼¹¹Ôì
+    // -------------------------- æ„é€ å‡½æ•° --------------------------
+    // ç©ºå›¾æ„é€ 
     Graph(GraphType t = UNDIRECTED) : type(t), vertexCount(0), edgeCount(0), INF(static_cast<WeightType>(INT_MAX / 2)) {}
 
-    // ÒÑÖª¶¥µã¼¯ºÏ¹¹Ôì
+    // å·²çŸ¥é¡¶ç‚¹é›†åˆæ„é€ 
     Graph(const std::vector<VertexType>& vs, GraphType t = UNDIRECTED)
         : type(t), vertices(vs), vertexCount(static_cast<int>(vs.size())), edgeCount(0), INF(static_cast<WeightType>(INT_MAX / 2)) {
         adjList.resize(vertexCount);
-        // ³õÊ¼»¯ÁÚ½Ó¾ØÕó£¨ÎŞÇî´ó±íÊ¾ÎŞ±ß£©
+        // åˆå§‹åŒ–é‚»æ¥çŸ©é˜µï¼ˆæ— ç©·å¤§è¡¨ç¤ºæ— è¾¹ï¼‰
         adjMatrix.resize(vertexCount, std::vector<WeightType>(vertexCount, INF));
-        for (int i = 0; i < vertexCount; i++) adjMatrix[i][i] = 0;  // ×ÔÉíµ½×ÔÉíÈ¨ÖØÎª0
+        for (int i = 0; i < vertexCount; i++) adjMatrix[i][i] = 0;  // è‡ªèº«åˆ°è‡ªèº«æƒé‡ä¸º0
     }
 
-    // -------------------------- »ù´¡²Ù×÷£ºÌí¼Ó/É¾³ı¶¥µã/±ß --------------------------
-    // Ìí¼Ó¶¥µã£¨·µ»Ø¶¥µãË÷Òı£¬ÒÑ´æÔÚ·µ»ØÔ­Ë÷Òı£©
+    // -------------------------- åŸºç¡€æ“ä½œï¼šæ·»åŠ /åˆ é™¤é¡¶ç‚¹/è¾¹ --------------------------
+    // æ·»åŠ é¡¶ç‚¹ï¼ˆè¿”å›é¡¶ç‚¹ç´¢å¼•ï¼Œå·²å­˜åœ¨è¿”å›åŸç´¢å¼•ï¼‰
     int addVertex(const VertexType& v) {
         int idx = findVertexIndex(v);
         if (idx != -1) return idx;
         vertices.push_back(v);
         vertexCount++;
         adjList.resize(vertexCount);
-        // ¸üĞÂÁÚ½Ó¾ØÕó
+        // æ›´æ–°é‚»æ¥çŸ©é˜µ
         adjMatrix.resize(vertexCount, std::vector<WeightType>(vertexCount, INF));
         for (int i = 0; i < vertexCount; i++) {
             adjMatrix[i][vertexCount - 1] = INF;
@@ -167,18 +167,18 @@ public:
         return vertexCount - 1;
     }
 
-    // Ìí¼Ó±ß£¨from -> to£¬ÎŞÏòÍ¼×Ô¶¯Ìí¼Ó·´Ïò±ß£©
+    // æ·»åŠ è¾¹ï¼ˆfrom -> toï¼Œæ— å‘å›¾è‡ªåŠ¨æ·»åŠ åå‘è¾¹ï¼‰
     bool addEdge(const VertexType& from, const VertexType& to, WeightType weight = 1) {
         int u = findVertexIndex(from);
         int v = findVertexIndex(to);
-        if (u == -1 || v == -1) return false;  // ¶¥µã²»´æÔÚ
-        if (adjMatrix[u][v] != INF) return false;  // ±ßÒÑ´æÔÚ
+        if (u == -1 || v == -1) return false;  // é¡¶ç‚¹ä¸å­˜åœ¨
+        if (adjMatrix[u][v] != INF) return false;  // è¾¹å·²å­˜åœ¨
 
-        // ¸üĞÂÁÚ½Ó±í
+        // æ›´æ–°é‚»æ¥è¡¨
         adjList[u].emplace_back(v, weight);
         if (type == UNDIRECTED) adjList[v].emplace_back(u, weight);
 
-        // ¸üĞÂÁÚ½Ó¾ØÕó
+        // æ›´æ–°é‚»æ¥çŸ©é˜µ
         adjMatrix[u][v] = weight;
         if (type == UNDIRECTED) adjMatrix[v][u] = weight;
 
@@ -186,13 +186,13 @@ public:
         return true;
     }
 
-    // É¾³ı±ß
+    // åˆ é™¤è¾¹
     bool removeEdge(const VertexType& from, const VertexType& to) {
         int u = findVertexIndex(from);
         int v = findVertexIndex(to);
         if (u == -1 || v == -1 || adjMatrix[u][v] == INF) return false;
 
-        // ¸üĞÂÁÚ½Ó±í
+        // æ›´æ–°é‚»æ¥è¡¨
         adjList[u].erase(std::remove_if(adjList[u].begin(), adjList[u].end(),
                                         [v](const Edge<WeightType>& e) { return e.to == v; }),
                         adjList[u].end());
@@ -202,7 +202,7 @@ public:
                             adjList[v].end());
         }
 
-        // ¸üĞÂÁÚ½Ó¾ØÕó
+        // æ›´æ–°é‚»æ¥çŸ©é˜µ
         adjMatrix[u][v] = INF;
         if (type == UNDIRECTED) adjMatrix[v][u] = INF;
 
@@ -210,26 +210,26 @@ public:
         return true;
     }
 
-    // -------------------------- Í¼µÄ´æ´¢±íÊ¾£ºÊä³öÁÚ½Ó¾ØÕó/ÁÚ½Ó±í --------------------------
-    // Êä³öÁÚ½Ó¾ØÕó
+    // -------------------------- å›¾çš„å­˜å‚¨è¡¨ç¤ºï¼šè¾“å‡ºé‚»æ¥çŸ©é˜µ/é‚»æ¥è¡¨ --------------------------
+    // è¾“å‡ºé‚»æ¥çŸ©é˜µ
     void printAdjMatrix() const {
-        std::cout << "=== ÁÚ½Ó¾ØÕó ===" << std::endl;
+        std::cout << "=== é‚»æ¥çŸ©é˜µ ===" << std::endl;
         std::cout << "   ";
         for (const auto& v : vertices) std::cout << v << " ";
         std::cout << std::endl;
         for (int i = 0; i < vertexCount; i++) {
             std::cout << vertices[i] << "  ";
             for (int j = 0; j < vertexCount; j++) {
-                if (adjMatrix[i][j] == INF) std::cout << "¡Ş ";
+                if (adjMatrix[i][j] == INF) std::cout << "âˆ ";
                 else std::cout << adjMatrix[i][j] << " ";
             }
             std::cout << std::endl;
         }
     }
 
-    // Êä³öÁÚ½Ó±í
+    // è¾“å‡ºé‚»æ¥è¡¨
     void printAdjList() const {
-        std::cout << "=== ÁÚ½Ó±í ===" << std::endl;
+        std::cout << "=== é‚»æ¥è¡¨ ===" << std::endl;
         for (int i = 0; i < vertexCount; i++) {
             std::cout << vertices[i] << " -> ";
             for (const auto& edge : adjList[i]) {
@@ -239,8 +239,8 @@ public:
         }
     }
 
-    // -------------------------- Í¼µÄ±éÀú£ºBFS/DFS --------------------------
-    // BFS±éÀú£¨´ÓÖ¸¶¨¶¥µã³ö·¢£¬·µ»Ø±éÀúĞòÁĞ£©
+    // -------------------------- å›¾çš„éå†ï¼šBFS/DFS --------------------------
+    // BFSéå†ï¼ˆä»æŒ‡å®šé¡¶ç‚¹å‡ºå‘ï¼Œè¿”å›éå†åºåˆ—ï¼‰
     std::vector<VertexType> BFS(const VertexType& start) const {
         std::vector<VertexType> result;
         int startIdx = findVertexIndex(start);
@@ -266,7 +266,7 @@ public:
         return result;
     }
 
-    // DFS±éÀú£¨µİ¹é°æ£¬·µ»Ø±éÀúĞòÁĞ£©
+    // DFSéå†ï¼ˆé€’å½’ç‰ˆï¼Œè¿”å›éå†åºåˆ—ï¼‰
     std::vector<VertexType> DFS_Recursive(const VertexType& start) const {
         std::vector<VertexType> result;
         int startIdx = findVertexIndex(start);
@@ -277,7 +277,7 @@ public:
         return result;
     }
 
-    // DFS±éÀú£¨µü´ú°æ£¬·µ»Ø±éÀúĞòÁĞ£©
+    // DFSéå†ï¼ˆè¿­ä»£ç‰ˆï¼Œè¿”å›éå†åºåˆ—ï¼‰
     std::vector<VertexType> DFS_Iterative(const VertexType& start) const {
         std::vector<VertexType> result;
         int startIdx = findVertexIndex(start);
@@ -293,7 +293,7 @@ public:
             st.pop();
             result.push_back(vertices[u]);
 
-            // ÄæĞòÈëÕ»£¬±£Ö¤±éÀúË³ĞòÓëµİ¹é°æÒ»ÖÂ
+            // é€†åºå…¥æ ˆï¼Œä¿è¯éå†é¡ºåºä¸é€’å½’ç‰ˆä¸€è‡´
             for (auto it = adjList[u].rbegin(); it != adjList[u].rend(); ++it) {
                 if (!visited[it->to]) {
                     visited[it->to] = true;
@@ -304,17 +304,17 @@ public:
         return result;
     }
 
-    // -------------------------- ×î¶ÌÂ·¾¶Ëã·¨ --------------------------
-    // DijkstraËã·¨£¨µ¥Ô´×î¶ÌÂ·¾¶£¬ÎŞ¸ºÈ¨±ß£©
+    // -------------------------- æœ€çŸ­è·¯å¾„ç®—æ³• --------------------------
+    // Dijkstraç®—æ³•ï¼ˆå•æºæœ€çŸ­è·¯å¾„ï¼Œæ— è´Ÿæƒè¾¹ï¼‰
     std::map<VertexType, WeightType> Dijkstra(const VertexType& start) const {
         std::map<VertexType, WeightType> dist;
         int startIdx = findVertexIndex(start);
         if (startIdx == -1) return dist;
 
-        // ³õÊ¼»¯¾àÀë
+        // åˆå§‹åŒ–è·ç¦»
         std::vector<WeightType> distance(vertexCount, INF);
         distance[startIdx] = 0;
-        // ÓÅÏÈ¶ÓÁĞ£¨Ğ¡¸ù¶Ñ£¬´æ´¢{µ±Ç°¾àÀë, ¶¥µãË÷Òı}£©
+        // ä¼˜å…ˆé˜Ÿåˆ—ï¼ˆå°æ ¹å †ï¼Œå­˜å‚¨{å½“å‰è·ç¦», é¡¶ç‚¹ç´¢å¼•}ï¼‰
         std::priority_queue<std::pair<WeightType, int>,
                             std::vector<std::pair<WeightType, int>>,
                             std::greater<std::pair<WeightType, int>>> pq;
@@ -326,7 +326,7 @@ public:
             WeightType currDist = topPair.first;
             int u = topPair.second;
 
-            if (currDist > distance[u]) continue;  // ÒÑÕÒµ½¸ü¶ÌÂ·¾¶£¬Ìø¹ı
+            if (currDist > distance[u]) continue;  // å·²æ‰¾åˆ°æ›´çŸ­è·¯å¾„ï¼Œè·³è¿‡
 
             for (const auto& edge : adjList[u]) {
                 int v = edge.to;
@@ -338,20 +338,20 @@ public:
             }
         }
 
-        // ×ª»»Îª¶¥µã-¾àÀëÓ³Éä£¨-1±íÊ¾²»¿É´ï£©
+        // è½¬æ¢ä¸ºé¡¶ç‚¹-è·ç¦»æ˜ å°„ï¼ˆ-1è¡¨ç¤ºä¸å¯è¾¾ï¼‰
         for (int i = 0; i < vertexCount; ++i) {
             dist[vertices[i]] = (distance[i] == INF) ? static_cast<WeightType>(-1) : distance[i];
         }
         return dist;
     }
 
-    // Floyd-WarshallËã·¨£¨¶àÔ´×î¶ÌÂ·¾¶£¬Ö§³Ö¸ºÈ¨±ß£¬ÎŞ¸º»·£©
+    // Floyd-Warshallç®—æ³•ï¼ˆå¤šæºæœ€çŸ­è·¯å¾„ï¼Œæ”¯æŒè´Ÿæƒè¾¹ï¼Œæ— è´Ÿç¯ï¼‰
     std::map<VertexType, std::map<VertexType, WeightType>> Floyd() const {
         std::map<VertexType, std::map<VertexType, WeightType>> distMap;
-        // ³õÊ¼»¯¾àÀë¾ØÕóÎªÁÚ½Ó¾ØÕóµÄ¸±±¾
+        // åˆå§‹åŒ–è·ç¦»çŸ©é˜µä¸ºé‚»æ¥çŸ©é˜µçš„å‰¯æœ¬
         std::vector<std::vector<WeightType>> dist = adjMatrix;
 
-        // ¶¯Ì¬¹æ»®¸üĞÂ×î¶ÌÂ·¾¶
+        // åŠ¨æ€è§„åˆ’æ›´æ–°æœ€çŸ­è·¯å¾„
         for (int k = 0; k < vertexCount; ++k) {
             for (int i = 0; i < vertexCount; ++i) {
                 for (int j = 0; j < vertexCount; ++j) {
@@ -362,7 +362,7 @@ public:
             }
         }
 
-        // ×ª»»ÎªË«²ãÓ³Éä£¨-1±íÊ¾²»¿É´ï£©
+        // è½¬æ¢ä¸ºåŒå±‚æ˜ å°„ï¼ˆ-1è¡¨ç¤ºä¸å¯è¾¾ï¼‰
         for (int i = 0; i < vertexCount; ++i) {
             for (int j = 0; j < vertexCount; ++j) {
                 distMap[vertices[i]][vertices[j]] = (dist[i][j] == INF) ? static_cast<WeightType>(-1) : dist[i][j];
@@ -371,21 +371,21 @@ public:
         return distMap;
     }
 
-    // -------------------------- ×îĞ¡Éú³ÉÊ÷£¨MST£©Ëã·¨ --------------------------
-    // PrimËã·¨£¨ÊÊºÏ³íÃÜÍ¼£¬·µ»ØMSTµÄ±ß¼¯ºÏºÍ×ÜÈ¨ÖØ£©
+    // -------------------------- æœ€å°ç”Ÿæˆæ ‘ï¼ˆMSTï¼‰ç®—æ³• --------------------------
+    // Primç®—æ³•ï¼ˆé€‚åˆç¨ å¯†å›¾ï¼Œè¿”å›MSTçš„è¾¹é›†åˆå’Œæ€»æƒé‡ï¼‰
     std::pair<std::vector<std::tuple<VertexType, VertexType, WeightType>>, WeightType> Prim() const {
         std::vector<std::tuple<VertexType, VertexType, WeightType>> mstEdges;
         WeightType totalWeight = 0;
-        if (vertexCount <= 1 || type == DIRECTED) return std::make_pair(mstEdges, totalWeight);  // MST½öÊÊÓÃÓÚÎŞÏòÍ¼
+        if (vertexCount <= 1 || type == DIRECTED) return std::make_pair(mstEdges, totalWeight);  // MSTä»…é€‚ç”¨äºæ— å‘å›¾
 
         std::vector<bool> inMST(vertexCount, false);
         std::vector<WeightType> key(vertexCount, INF);
         std::vector<int> parent(vertexCount, -1);
 
-        // ´ÓµÚÒ»¸ö¶¥µã¿ªÊ¼£¨¿ÉĞŞ¸ÄÎªÖ¸¶¨Æğµã£©
+        // ä»ç¬¬ä¸€ä¸ªé¡¶ç‚¹å¼€å§‹ï¼ˆå¯ä¿®æ”¹ä¸ºæŒ‡å®šèµ·ç‚¹ï¼‰
         key[0] = 0;
         for (int i = 0; i < vertexCount; ++i) {
-            // ÕÒµ½Î´¼ÓÈëMSTÇÒkeyÖµ×îĞ¡µÄ¶¥µã
+            // æ‰¾åˆ°æœªåŠ å…¥MSTä¸”keyå€¼æœ€å°çš„é¡¶ç‚¹
             int u = -1;
             for (int j = 0; j < vertexCount; ++j) {
                 if (!inMST[j] && (u == -1 || key[j] < key[u])) {
@@ -393,14 +393,14 @@ public:
                 }
             }
 
-            if (u == -1) break;  // Í¼²»Á¬Í¨£¬ÌáÇ°ÍË³ö
+            if (u == -1) break;  // å›¾ä¸è¿é€šï¼Œæå‰é€€å‡º
             inMST[u] = true;
-            if (parent[u] != -1) {  // ·ÇÆğµã£¬Ìí¼Ó±ßµ½MST
+            if (parent[u] != -1) {  // éèµ·ç‚¹ï¼Œæ·»åŠ è¾¹åˆ°MST
                 mstEdges.emplace_back(vertices[parent[u]], vertices[u], key[u]);
                 totalWeight += key[u];
             }
 
-            // ¸üĞÂÁÚ½Ó¶¥µãµÄkeyÖµ
+            // æ›´æ–°é‚»æ¥é¡¶ç‚¹çš„keyå€¼
             for (const auto& edge : adjList[u]) {
                 int v = edge.to;
                 if (!inMST[v] && edge.w < key[v]) {
@@ -413,32 +413,32 @@ public:
         return std::make_pair(mstEdges, totalWeight);
     }
 
-    // KruskalËã·¨£¨ÊÊºÏÏ¡ÊèÍ¼£¬·µ»ØMSTµÄ±ß¼¯ºÏºÍ×ÜÈ¨ÖØ£©
+    // Kruskalç®—æ³•ï¼ˆé€‚åˆç¨€ç–å›¾ï¼Œè¿”å›MSTçš„è¾¹é›†åˆå’Œæ€»æƒé‡ï¼‰
     std::pair<std::vector<std::tuple<VertexType, VertexType, WeightType>>, WeightType> Kruskal() const {
         std::vector<std::tuple<VertexType, VertexType, WeightType>> mstEdges;
         WeightType totalWeight = 0;
-        if (vertexCount <= 1 || type == DIRECTED) return std::make_pair(mstEdges, totalWeight);  // MST½öÊÊÓÃÓÚÎŞÏòÍ¼
+        if (vertexCount <= 1 || type == DIRECTED) return std::make_pair(mstEdges, totalWeight);  // MSTä»…é€‚ç”¨äºæ— å‘å›¾
 
-        // ÊÕ¼¯ËùÓĞ±ß£¨È¥ÖØ£¬ÎŞÏòÍ¼Ö»´æÒ»´Î£©
+        // æ”¶é›†æ‰€æœ‰è¾¹ï¼ˆå»é‡ï¼Œæ— å‘å›¾åªå­˜ä¸€æ¬¡ï¼‰
         std::vector<std::tuple<int, int, WeightType>> edges;
         for (int u = 0; u < vertexCount; ++u) {
             for (const auto& edge : adjList[u]) {
                 int v = edge.to;
-                if (u < v) {  // ±ÜÃâÖØ¸´Ìí¼ÓÎŞÏò±ß
+                if (u < v) {  // é¿å…é‡å¤æ·»åŠ æ— å‘è¾¹
                     edges.emplace_back(u, v, edge.w);
                 }
             }
         }
 
-        // °´È¨ÖØÉıĞòÅÅĞò
+        // æŒ‰æƒé‡å‡åºæ’åº
         std::sort(edges.begin(), edges.end(), compareEdges);
 
-        // ³õÊ¼»¯²¢²é¼¯
+        // åˆå§‹åŒ–å¹¶æŸ¥é›†
         std::vector<int> parent(vertexCount);
         std::vector<int> rank(vertexCount, 0);
         for (int i = 0; i < vertexCount; ++i) parent[i] = i;
 
-        // ÒÀ´ÎÑ¡±ß£¬±ÜÃâ»·
+        // ä¾æ¬¡é€‰è¾¹ï¼Œé¿å…ç¯
         for (const auto& edge : edges) {
             int u = std::get<0>(edge);
             int v = std::get<1>(edge);
@@ -448,39 +448,39 @@ public:
                 unionSet(u, v, parent, rank);
                 mstEdges.emplace_back(vertices[u], vertices[v], w);
                 totalWeight += w;
-                if (mstEdges.size() == static_cast<size_t>(vertexCount - 1)) break;  // MSTÒÑÉú³É£¬ÌáÇ°ÍË³ö
+                if (mstEdges.size() == static_cast<size_t>(vertexCount - 1)) break;  // MSTå·²ç”Ÿæˆï¼Œæå‰é€€å‡º
             }
         }
 
         return std::make_pair(mstEdges, totalWeight);
     }
 
-    // -------------------------- Á¬Í¨ĞÔ·ÖÎö£º¹Ø½Úµã/Ë«Á¬Í¨·ÖÁ¿ --------------------------
-    // ²éÕÒ¹Ø½Úµã£¨¸îµã£©ºÍË«Á¬Í¨·ÖÁ¿
+    // -------------------------- è¿é€šæ€§åˆ†æï¼šå…³èŠ‚ç‚¹/åŒè¿é€šåˆ†é‡ --------------------------
+    // æŸ¥æ‰¾å…³èŠ‚ç‚¹ï¼ˆå‰²ç‚¹ï¼‰å’ŒåŒè¿é€šåˆ†é‡
     std::pair<std::vector<VertexType>, std::vector<std::vector<VertexType>>> findArticulationAndBCC() const {
-        std::vector<VertexType> articulationPoints;  // ¹Ø½Úµã¼¯ºÏ
-        std::vector<std::vector<VertexType>> bcc;     // Ë«Á¬Í¨·ÖÁ¿¼¯ºÏ
-        if (vertexCount == 0 || type == DIRECTED) return std::make_pair(articulationPoints, bcc);  // ½öÖ§³ÖÎŞÏòÍ¼
+        std::vector<VertexType> articulationPoints;  // å…³èŠ‚ç‚¹é›†åˆ
+        std::vector<std::vector<VertexType>> bcc;     // åŒè¿é€šåˆ†é‡é›†åˆ
+        if (vertexCount == 0 || type == DIRECTED) return std::make_pair(articulationPoints, bcc);  // ä»…æ”¯æŒæ— å‘å›¾
 
-        std::vector<int> disc(vertexCount, -1);       // ·¢ÏÖÊ±¼ä
-        std::vector<int> low(vertexCount, -1);        // ×îµÍ·¢ÏÖÊ±¼ä
+        std::vector<int> disc(vertexCount, -1);       // å‘ç°æ—¶é—´
+        std::vector<int> low(vertexCount, -1);        // æœ€ä½å‘ç°æ—¶é—´
         std::vector<bool> visited(vertexCount, false);
         std::vector<bool> isArticulation(vertexCount, false);
         std::stack<std::pair<int, int>> edgeStack;
         int time = 0;
 
-        // ´¦Àí·ÇÁ¬Í¨Í¼
+        // å¤„ç†éè¿é€šå›¾
         for (int i = 0; i < vertexCount; ++i) {
             if (!visited[i]) {
                 tarjan(i, -1, time, disc, low, visited, isArticulation, edgeStack, bcc);
-                // ´¦ÀíÕ»ÖĞÊ£ÓàµÄ±ß£¨¸ù½ÚµãµÄË«Á¬Í¨·ÖÁ¿£©
+                // å¤„ç†æ ˆä¸­å‰©ä½™çš„è¾¹ï¼ˆæ ¹èŠ‚ç‚¹çš„åŒè¿é€šåˆ†é‡ï¼‰
                 if (!edgeStack.empty()) {
                     extractBCC(i, -1, edgeStack, bcc);
                 }
             }
         }
 
-        // ÊÕ¼¯¹Ø½Úµã
+        // æ”¶é›†å…³èŠ‚ç‚¹
         for (int i = 0; i < vertexCount; ++i) {
             if (isArticulation[i]) {
                 articulationPoints.push_back(vertices[i]);
@@ -490,14 +490,14 @@ public:
         return std::make_pair(articulationPoints, bcc);
     }
 
-    // -------------------------- ¹¤¾ßº¯Êı --------------------------
-    // »ñÈ¡¶¥µãÊı
+    // -------------------------- å·¥å…·å‡½æ•° --------------------------
+    // è·å–é¡¶ç‚¹æ•°
     int getVertexCount() const { return vertexCount; }
 
-    // »ñÈ¡±ßÊı
+    // è·å–è¾¹æ•°
     int getEdgeCount() const { return edgeCount; }
 
-    // Çå¿ÕÍ¼
+    // æ¸…ç©ºå›¾
     void clear() {
         vertices.clear();
         adjList.clear();
@@ -507,10 +507,10 @@ public:
     }
 };
 
-// ¸¨Öú´òÓ¡º¯Êı£ºÊä³ö±éÀúĞòÁĞ
+// è¾…åŠ©æ‰“å°å‡½æ•°ï¼šè¾“å‡ºéå†åºåˆ—
 template <typename T>
 void printTraversal(const std::vector<T>& seq, const std::string& name) {
-    std::cout << "=== " << name << " ±éÀúĞòÁĞ ===" << std::endl;
+    std::cout << "=== " << name << " éå†åºåˆ— ===" << std::endl;
     for (size_t i = 0; i < seq.size(); ++i) {
         std::cout << seq[i];
         if (i != seq.size() - 1) std::cout << " -> ";
@@ -518,47 +518,47 @@ void printTraversal(const std::vector<T>& seq, const std::string& name) {
     std::cout << std::endl;
 }
 
-// ¸¨Öú´òÓ¡º¯Êı£ºÊä³ö×î¶ÌÂ·¾¶£¨Dijkstra½á¹û£©
+// è¾…åŠ©æ‰“å°å‡½æ•°ï¼šè¾“å‡ºæœ€çŸ­è·¯å¾„ï¼ˆDijkstraç»“æœï¼‰
 template <typename V, typename W>
 void printShortestPaths(const std::map<V, W>& dist, const V& start) {
-    std::cout << "=== ´Ó " << start << " ³ö·¢µÄ×î¶ÌÂ·¾¶ ===" << std::endl;
+    std::cout << "=== ä» " << start << " å‡ºå‘çš„æœ€çŸ­è·¯å¾„ ===" << std::endl;
     for (const auto& pair : dist) {
         const V& v = pair.first;
         const W& d = pair.second;
         if (d == static_cast<W>(-1)) {
-            std::cout << start << " -> " << v << " : ²»¿É´ï" << std::endl;
+            std::cout << start << " -> " << v << " : ä¸å¯è¾¾" << std::endl;
         } else {
             std::cout << start << " -> " << v << " : " << d << std::endl;
         }
     }
 }
 
-// ¸¨Öú´òÓ¡º¯Êı£ºÊä³öMST½á¹û
+// è¾…åŠ©æ‰“å°å‡½æ•°ï¼šè¾“å‡ºMSTç»“æœ
 template <typename V, typename W>
 void printMST(const std::vector<std::tuple<V, V, W>>& edges, W totalWeight) {
-    std::cout << "=== ×îĞ¡Éú³ÉÊ÷£¨MST£© ===" << std::endl;
-    std::cout << "×ÜÈ¨ÖØ£º" << totalWeight << std::endl;
-    std::cout << "±ßÁĞ±í£º" << std::endl;
+    std::cout << "=== æœ€å°ç”Ÿæˆæ ‘ï¼ˆMSTï¼‰ ===" << std::endl;
+    std::cout << "æ€»æƒé‡ï¼š" << totalWeight << std::endl;
+    std::cout << "è¾¹åˆ—è¡¨ï¼š" << std::endl;
     for (const auto& edge : edges) {
         const V& u = std::get<0>(edge);
         const V& v = std::get<1>(edge);
         const W& w = std::get<2>(edge);
-        std::cout << u << " - " << v << " (È¨ÖØ£º" << w << ")" << std::endl;
+        std::cout << u << " - " << v << " (æƒé‡ï¼š" << w << ")" << std::endl;
     }
 }
 
-// ¸¨Öú´òÓ¡º¯Êı£ºÊä³ö¹Ø½ÚµãºÍË«Á¬Í¨·ÖÁ¿
+// è¾…åŠ©æ‰“å°å‡½æ•°ï¼šè¾“å‡ºå…³èŠ‚ç‚¹å’ŒåŒè¿é€šåˆ†é‡
 template <typename V>
 void printArticulationAndBCC(const std::vector<V>& articulation, const std::vector<std::vector<V>>& bcc) {
-    std::cout << "=== ¹Ø½Úµã£¨¸îµã£© ===" << std::endl;
+    std::cout << "=== å…³èŠ‚ç‚¹ï¼ˆå‰²ç‚¹ï¼‰ ===" << std::endl;
     for (const auto& v : articulation) {
         std::cout << v << " ";
     }
     std::cout << std::endl;
 
-    std::cout << "=== Ë«Á¬Í¨·ÖÁ¿£¨BCC£© ===" << std::endl;
+    std::cout << "=== åŒè¿é€šåˆ†é‡ï¼ˆBCCï¼‰ ===" << std::endl;
     for (size_t i = 0; i < bcc.size(); ++i) {
-        std::cout << "·ÖÁ¿ " << i + 1 << " : ";
+        std::cout << "åˆ†é‡ " << i + 1 << " : ";
         for (const auto& v : bcc[i]) {
             std::cout << v << " ";
         }
@@ -567,3 +567,4 @@ void printArticulationAndBCC(const std::vector<V>& articulation, const std::vect
 }
 
 #endif // GRAPH_H
+
